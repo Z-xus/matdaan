@@ -2,6 +2,8 @@
 
 A privacy-preserving decentralized voting system using zero-knowledge proofs.
 
+![System Architecture](./assets/architecture.svg)
+
 ## Features
 
 - Mock Aadhaar verification
