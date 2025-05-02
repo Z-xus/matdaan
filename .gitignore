@@ -1,0 +1,79 @@
+# Ignore node_modules globally
+node_modules/
+
+# Ignore lock files from pnpm (use pnpm-lock.yaml only)
+pnpm-lock.yaml
+
+# Ignore docker files
+docker/
+*.dockerignore
+
+# Ignore .env files (if any)
+.env
+
+# Ignore compiled files and logs
+*.log
+*.out
+
+# Ignore test coverage directory
+coverage/
+req.md
+
+# Ignore build directories from frontend and backend
+frontend/dist/
+backend/dist/
+
+# Ignore any IDE/editor specific files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Ignore node_modules in the backend
+backend/node_modules/
+
+# Ignore Docker and build artifacts
+backend/dist/
+backend/*.log
+
+# Ignore environment-specific files
+backend/.env
+
+# Ignore coverage from backend testing
+backend/coverage/
+
+# Ignore node_modules in the frontend
+frontend/node_modules/
+
+# Ignore build output (Vite, React, etc.)
+frontend/dist/
+frontend/.vite/
+
+# Ignore environment-specific files
+frontend/.env
+
+# Ignore coverage from frontend testing
+frontend/coverage/
+
+# Ignore generated files from TypeScript
+frontend/**/*.js
+frontend/**/*.js.map
+frontend/**/*.d.ts
+
+# Ignore node_modules in the contracts
+contracts/node_modules/
+
+# Ignore Hardhat build files
+contracts/artifacts/
+contracts/cache/
+
+# Ignore environment-specific files
+contracts/.env
+
+# Ignore compiled contracts and coverage from testing
+contracts/build/
+contracts/coverage/
+
+# Ignore lock file from pnpm
+contracts/pnpm-lock.yaml
+
