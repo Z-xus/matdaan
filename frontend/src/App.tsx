@@ -9,6 +9,7 @@ import AadhaarVerification from './pages/AadhaarVerification';
 import Elections from './pages/Elections';
 import ElectionDetails from './pages/ElectionDetails';
 import VoteVerification from './pages/VoteVerification';
+import Home from './pages/Home';
 
 function App() {
   const { t, i18n } = useTranslation();
@@ -25,9 +26,10 @@ function App() {
       <div className="min-h-screen bg-gray-100">
         <Navbar onLanguageToggle={toggleLanguage} currentLanguage={language} />
         
-        <main className="container mx-auto px-4 py-8">
+        <main className="container">
           <Routes>
-            <Route path="/" element={<AadhaarVerification />} />
+            <Route path="/" element={<Home/>} />
+            <Route path="/verify" element={<AadhaarVerification />} />
             <Route path="/elections" element={<Elections />} />
             <Route path="/elections/:id" element={<ElectionDetails />} />
             <Route path="/verify-vote/:nullifierHash" element={<VoteVerification />} />
