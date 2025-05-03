@@ -1,36 +1,46 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { LogInWithAnonAadhaar, useAnonAadhaar, AnonAadhaarProof } from "@anon-aadhaar/react";
 
 const AadhaarVerification = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [aadhaarNumber, setAadhaarNumber] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  
+  // Use Anon Aadhaar hook to get the authentication status
+  const [anonAadhaar] = useAnonAadhaar();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
+  // Generate a nullifier seed - in production you should use a secure method
+  // This is just for demonstration purposes
+  const nullifierSeed = 123456789; // In production, use crypto.randomBytes as shown in the docs
 
+  // Monitor Anon Aadhaar status
+  useEffect(() => {
+    console.log("Anon Aadhaar status:", anonAadhaar.status);
+    
+    // When user is successfully logged in
+    if (anonAadhaar.status === "logged-in") {
+      handleSuccessfulVerification();
+    }
+  }, [anonAadhaar]);
+
+  const handleSuccessfulVerification = async () => {
     try {
-      const response = await fetch('/api/verify-aadhaar', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ aadhaarNumber }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Verification failed');
-      }
-
+      setLoading(true);
+      
+      // Here you would typically send the proof to your backend
+      // For demo purposes, we'll just simulate successful verification
+      
       // Store verified voter info in localStorage
-      localStorage.setItem('verifiedVoter', JSON.stringify(data.voter));
+      // In a real app, you might want to store a JWT token instead
+      localStorage.setItem('verifiedVoter', JSON.stringify({
+        isVerified: true,
+        timestamp: Date.now()
+      }));
+      
+      // Navigate to elections page
       navigate('/elections');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Verification failed');
@@ -46,39 +56,49 @@ const AadhaarVerification = () => {
           {t('verifyAadhaar')}
         </h1>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="aadhaar" className="block text-sm font-medium text-gray-700">
-              {t('enterAadhaar')}
-            </label>
-            <input
-              type="text"
-              id="aadhaar"
-              value={aadhaarNumber}
-              onChange={(e) => setAadhaarNumber(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
-              placeholder="1234 5678 9012"
-              required
-              pattern="[0-9]{12}"
-              maxLength={12}
-            />
+        <div className="space-y-6">
+          <div className="text-center">
+            <p className="text-sm text-gray-600 mb-4">
+              {t('anonAadhaarDescription')}
+            </p>
+            
+            {/* Anon Aadhaar login button */}
+            <div className="flex justify-center mb-4">
+              <LogInWithAnonAadhaar 
+                nullifierSeed={nullifierSeed}
+                fieldsToReveal={["revealAgeAbove18"]} // Optional: only verify if user is above 18
+              />
+            </div>
+            
+            {/* Display status */}
+            <div className="text-sm">
+              {anonAadhaar.status === "logged-in" ? (
+                <p className="text-green-600">{t('verificationSuccessful')}</p>
+              ) : anonAadhaar.status === "logging-in" ? (
+                <p className="text-blue-600">{t('verifying')}</p>
+              ) : (
+                <p className="text-gray-600">{t('notVerified')}</p>
+              )}
+            </div>
           </div>
+
+          {/* Display proof information when logged in */}
+          {anonAadhaar.status === "logged-in" && (
+            <div className="bg-gray-50 p-3 rounded-md">
+              <p className="text-sm font-medium text-gray-700 mb-2">
+                {t('proofGenerated')}
+              </p>
+              <AnonAadhaarProof code={JSON.stringify(anonAadhaar.pcd, null, 2)} />
+            </div>
+          )}
 
           {error && (
             <div className="text-red-600 text-sm">{error}</div>
           )}
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50"
-          >
-            {loading ? t('loading') : t('verify')}
-          </button>
-        </form>
+        </div>
       </div>
     </div>
   );
 };
 
-export default AadhaarVerification; 
+export default AadhaarVerification;
