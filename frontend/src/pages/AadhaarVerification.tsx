@@ -50,50 +50,66 @@ const AadhaarVerification = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto">
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">
-          {t('verifyAadhaar')}
-        </h1>
+    <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50">
+      <div className="w-full max-w-md space-y-8 bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+        <div className="space-y-2 text-center">
+          <h1 className="text-3xl font-bold tracking-tighter text-gray-900">
+            {t('verifyAadhaar')}
+          </h1>
+          <p className="text-sm text-gray-500 leading-relaxed">
+            {t('anonAadhaarDescription')}
+          </p>
+        </div>
 
         <div className="space-y-6">
-          <div className="text-center">
-            <p className="text-sm text-gray-600 mb-4">
-              {t('anonAadhaarDescription')}
-            </p>
-            
-            {/* Anon Aadhaar login button */}
-            <div className="flex justify-center mb-4">
-              <LogInWithAnonAadhaar 
-                nullifierSeed={nullifierSeed}
-                fieldsToReveal={["revealAgeAbove18"]} // Optional: only verify if user is above 18
-              />
-            </div>
-            
-            {/* Display status */}
-            <div className="text-sm">
-              {anonAadhaar.status === "logged-in" ? (
-                <p className="text-green-600">{t('verificationSuccessful')}</p>
-              ) : anonAadhaar.status === "logging-in" ? (
-                <p className="text-blue-600">{t('verifying')}</p>
-              ) : (
-                <p className="text-gray-600">{t('notVerified')}</p>
-              )}
-            </div>
+          {/* Anon Aadhaar login button */}
+          <div className="flex justify-center">
+            <LogInWithAnonAadhaar 
+              nullifierSeed={nullifierSeed}
+              fieldsToReveal={["revealAgeAbove18"]} // Optional: only verify if user is above 18
+            />
+          </div>
+          
+          {/* Display status */}
+          <div className="flex justify-center">
+            {anonAadhaar.status === "logged-in" ? (
+              <div className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-green-50 text-green-700">
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                {t('verificationSuccessful')}
+              </div>
+            ) : anonAadhaar.status === "logging-in" ? (
+              <div className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-blue-50 text-blue-700">
+                <svg className="w-4 h-4 mr-2 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                </svg>
+                {t('verifying')}
+              </div>
+            ) : (
+              <div className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-gray-50 text-gray-600">
+                {t('notVerified')}
+              </div>
+            )}
           </div>
 
           {/* Display proof information when logged in */}
           {anonAadhaar.status === "logged-in" && (
-            <div className="bg-gray-50 p-3 rounded-md">
-              <p className="text-sm font-medium text-gray-700 mb-2">
+            <div className="rounded-xl border border-gray-100 bg-gray-50/50 p-6">
+              <p className="text-sm font-medium text-gray-900 mb-4">
                 {t('proofGenerated')}
               </p>
-              <AnonAadhaarProof code={JSON.stringify(anonAadhaar.pcd, null, 2)} />
+              <div className="overflow-hidden rounded-lg border border-gray-100">
+                <AnonAadhaarProof code={JSON.stringify(anonAadhaar.pcd, null, 2)} />
+              </div>
             </div>
           )}
 
           {error && (
-            <div className="text-red-600 text-sm">{error}</div>
+            <div className="p-4 rounded-lg bg-red-50 border border-red-100">
+              <p className="text-sm text-red-600">{error}</p>
+            </div>
           )}
         </div>
       </div>
